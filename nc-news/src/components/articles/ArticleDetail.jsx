@@ -1,14 +1,7 @@
 import React from "react";
-import ArticleCard from "./ArticleCard";
 
-function ArticleList({ articles }) {
-  return (
-    <div className="article-list">
-      {articles.map((article) => (
-        <ArticleCard key={article.id} article={article} />
-      ))}
-    </div>
-  );
-}
+const ArticleDetail = () => {
+  return <div>Article Detail Placeholder</div>;
+};
 
-export default ArticleList;
+export default ArticleDetail;
