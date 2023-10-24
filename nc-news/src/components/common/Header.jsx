@@ -3,7 +3,11 @@ import React from "react";
 function Header() {
   return (
     <div className="header">
-      <h3>Northcoders News</h3>
+      <img
+        className="nc-logo-header"
+        src="../src/assets/NC News Logo.png"
+        alt="NC News logo of colors red, black and white"
+      />
     </div>
   );
 }
