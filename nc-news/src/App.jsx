@@ -8,6 +8,8 @@ import Header from "./components/common/Header";
 import Navbar from "./components/common/NavBar";
 import Footer from "./components/common/Footer";
 import ArticleContext, { ArticleProvider } from "./contexts/ArticleContext.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./app.css";
 
 function App() {
@@ -15,6 +17,7 @@ function App() {
     <Router>
       <ArticleProvider>
         <div className="wrapper">
+          <ToastContainer />
           <header className="header">
             <div className="content">
               <Header />
