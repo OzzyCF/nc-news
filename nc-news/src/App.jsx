@@ -7,28 +7,47 @@ import UserProfile from "./components/users/UserProfile";
 import Header from "./components/common/Header";
 import Navbar from "./components/common/NavBar";
 import Footer from "./components/common/Footer";
+import ArticleContext, { ArticleProvider } from "./contexts/ArticleContext.jsx";
 import "./app.css";
-
-// Placeholder Navbar component
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Header />
-        <Navbar />
+      <ArticleProvider>
+        <div className="wrapper">
+          <header className="header">
+            <div className="content">
+              <Header />
+            </div>
+          </header>
 
-        <div className="main-content">
-          <Routes>
-            <Route path="/" element={<ArticleList />} />
-            <Route path="/articles/:article_id" element={<ArticleDetail />} />
-            <Route path="/topics" element={<TopicList />} />
-            <Route path="/users/:username" element={<UserProfile />} />
-          </Routes>
+          <nav className="navbar">
+            <div className="content">
+              <Navbar />
+            </div>
+          </nav>
+
+          <main className="main-content">
+            <div className="content">
+              <Routes>
+                <Route path="/" element={<ArticleList />} />
+                <Route
+                  path="/articles/:article_id"
+                  element={<ArticleDetail />}
+                />
+                <Route path="/topics" element={<TopicList />} />
+                <Route path="/users/:username" element={<UserProfile />} />
+              </Routes>
+            </div>
+          </main>
+
+          <footer className="footer">
+            <div className="content">
+              <Footer />
+            </div>
+          </footer>
         </div>
-
-        <Footer />
-      </div>
+      </ArticleProvider>
     </Router>
   );
 }
