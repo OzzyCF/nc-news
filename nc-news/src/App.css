@@ -236,10 +236,45 @@ margin-top: 10%
 }
 
 
-/* style all articles */
+/* comments styles*/
+
+.comment-bubble {
+  border: 1px solid #e0e0e0;
+  padding: 10px 15px;
+  border-radius: 20px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+  max-width: 95%;
+  position: relative;
+  
+}
+
+.comment-bubble p{
+  font-size: 0.9rem;
+  font-family: 'Helvetica', sans-serif;
+  text-align: justify;
+}
 
 
+.vote-button {
 
+ 
+  margin-left: auto;
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  padding: 10px;
+  transition: color 0.3s;
+  color: #797979;
+  font-size: 1.5rem;
+}
 
+.vote-button:hover {
+  color: #007BFF;  /* You can choose any hover color you prefer */
+}
 
+.vote-button:active {
+  transform: scale(0.95);
+}
 
