@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import CommentCard from "./CommentCard";
 import { toast } from "react-toastify";
+import { UserContext } from "../../contexts/UserContext";
 
 function ArticleDetail() {
   const [article, setArticle] = useState(null);
@@ -10,10 +11,17 @@ function ArticleDetail() {
   const [isLoading, setIsLoading] = useState(true);
   const { article_id } = useParams();
   const [showComments, setShowComments] = useState(false);
+  const { user } = useContext(UserContext);
+  const [newComment, setNewComment] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleVote = (increment) => {
+    if (!user) {
+      toast.error("Please log in to vote.");
+      return;
+    }
     const updatedVotes = article.votes + increment;
-    setArticle({ ...article, votes: updatedVotes }); // Optimistic update
+    setArticle({ ...article, votes: updatedVotes });
     axios
       .patch(
         `https://backend-news-api-ozzycf.onrender.com/api/articles/${article_id}`,
@@ -21,8 +29,34 @@ function ArticleDetail() {
       )
       .catch((error) => {
         console.error(error);
-        setArticle({ ...article, votes: article.votes }); // Revert on error
+        setArticle({ ...article, votes: article.votes });
         toast.error("Failed to update the vote. Please try again.");
+      });
+  };
+
+  const handleCommentSubmit = () => {
+    if (!newComment.trim()) {
+      toast.error("Comment cannot be empty.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    axios
+      .post(
+        `https://backend-news-api-ozzycf.onrender.com/api/articles/${article_id}/comments`,
+        { username: user.username, body: newComment }
+      )
+      .then((response) => {
+        setComments((prevComments) => [response.data.comment, ...prevComments]);
+        setIsSubmitting(false);
+        setNewComment("");
+        toast.success("Comment added successfully.");
+      })
+      .catch((error) => {
+        console.error("Error adding the comment:", error);
+        setIsSubmitting(false);
+        toast.error("Failed to add the comment. Please try again.");
       });
   };
 
@@ -39,6 +73,7 @@ function ArticleDetail() {
         console.error("Error fetching the article:", error);
         setIsLoading(false);
       });
+
     axios
       .get(
         `https://backend-news-api-ozzycf.onrender.com/api/articles/${article_id}/comments`
@@ -74,6 +109,7 @@ function ArticleDetail() {
         <button onClick={() => handleVote(1)}>👍 Upvote</button>
         <button onClick={() => handleVote(-1)}>👎 Downvote</button>
       </div>
+
       <button onClick={() => setShowComments(!showComments)}>
         {showComments ? "Hide Comments" : "Show Comments"}
       </button>
@@ -82,6 +118,23 @@ function ArticleDetail() {
           {comments.map((comment) => (
             <CommentCard key={comment.comment_id} comment={comment} />
           ))}
+        </div>
+      )}
+      {!user && (
+        <p id="comment-login-prompt">
+          Please login if you would like to leave a comment.
+        </p>
+      )}
+      {user && (
+        <div className="add-comment-section">
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="Add your comment here..."
+          />
+          <button onClick={handleCommentSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Add Comment"}
+          </button>
         </div>
       )}
     </div>
