@@ -120,7 +120,7 @@ body {
   width: 100%;
   border-radius: 5px;
   margin-bottom: 10px;
-  flex-grow: 1; /* let the image take up as much space as possible */
+  flex-grow: 1; 
 }
 
 .article-meta {
@@ -272,6 +272,11 @@ margin-top: 10%
   text-align: justify;
 }
 
+.comment-bubble .comment-delete:hover{
+  background-color: #c40000;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
 
 /* Style for the comment prompt */
 #comment-login-prompt {
@@ -330,9 +335,6 @@ margin-top: 10%
   font-size: 1.5rem;
 }
 
-.vote-button:hover {
-  color: #007BFF;  /* You can choose any hover color you prefer */
-}
 
 .vote-button:active {
   transform: scale(0.95);

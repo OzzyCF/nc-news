@@ -11,7 +11,7 @@ import ArticleContext, { ArticleProvider } from "./contexts/ArticleContext.jsx";
 import { UserProvider } from "./contexts/UserContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "./app.css";
+import "./App.css";
 import Login from "./components/users/Login";
 import TopicArticleList from "./components/topics/TopicArticleList";
 

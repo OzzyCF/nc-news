@@ -34,6 +34,12 @@ function ArticleDetail() {
       });
   };
 
+  const handleCommentDelete = (commentId) => {
+    setComments((prevComments) =>
+      prevComments.filter((comment) => comment.comment_id !== commentId)
+    );
+  };
+
   const handleCommentSubmit = () => {
     if (!newComment.trim()) {
       toast.error("Comment cannot be empty.");
@@ -131,7 +137,11 @@ function ArticleDetail() {
 
       <div className="comments-box">
         {comments.map((comment) => (
-          <CommentCard key={comment.comment_id} comment={comment} />
+          <CommentCard
+            key={comment.comment_id}
+            comment={comment}
+            onDelete={handleCommentDelete}
+          />
         ))}
       </div>
 
