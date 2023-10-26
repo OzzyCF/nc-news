@@ -8,11 +8,12 @@ import Header from "./components/common/Header";
 import Navbar from "./components/common/NavBar";
 import Footer from "./components/common/Footer";
 import ArticleContext, { ArticleProvider } from "./contexts/ArticleContext.jsx";
+import { UserProvider } from "./contexts/UserContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./app.css";
 import Login from "./components/users/Login";
-import { UserProvider } from "./contexts/UserContext";
+import TopicArticleList from "./components/topics/TopicArticleList";
 
 function App() {
   return (
@@ -41,7 +42,12 @@ function App() {
                     path="/articles/:article_id"
                     element={<ArticleDetail />}
                   />
-                  <Route path="/topics" element={<TopicList />} />
+                  <Route path="/topics" element={<TopicList />}>
+                    <Route
+                      path="/topics/:topic_slug"
+                      element={<TopicArticleList />}
+                    />
+                  </Route>
                   <Route path="/users/:username" element={<UserProfile />} />
                   <Route path="/login" element={<Login />} />
                 </Routes>

@@ -3,10 +3,12 @@ import React, { createContext, useState } from "react";
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  const [user, setUser] = useState(storedUser || null);
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem("loggedInUser");
   };
 
   return (

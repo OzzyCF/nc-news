@@ -1,34 +1,38 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { UserContext } from "../../contexts/UserContext";
-import { useNavigate } from "react-router-dom"; // <-- Import this
+import { useNavigate } from "react-router-dom";
 
 function Login() {
   const [username, setUsername] = useState("");
+  const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
   const { setUser } = useContext(UserContext);
-  const navigate = useNavigate(); // <-- Use the hook here
+  const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
+  useEffect(() => {
     axios
       .get("https://backend-news-api-ozzycf.onrender.com/api/users")
       .then((response) => {
-        const users = response.data.users;
-        const user = users.find((user) => user.username === username);
-        if (user) {
-          setUser(user);
-          setError(null);
-          navigate("/"); // <-- Navigate to the main page upon successful login
-        } else {
-          setError("Invalid username. Please try again.");
-        }
+        setUsers(response.data.users);
       })
       .catch((err) => {
         console.error(err);
         setError("Failed to fetch users. Please try again.");
       });
+  }, []);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const user = users.find((user) => user.username === username);
+    if (user) {
+      setUser(user);
+      localStorage.setItem("loggedInUser", JSON.stringify(user));
+      navigate("/");
+    } else {
+      setError("Invalid username. Please try again.");
+    }
   };
 
   return (
@@ -44,6 +48,12 @@ function Login() {
         <button type="submit">Login</button>
       </form>
       {error && <p>{error}</p>}
+      <h3>Available Users:</h3>
+      <ul>
+        {users.map((user) => (
+          <li key={user.id}>{user.username}</li>
+        ))}
+      </ul>
     </div>
   );
 }
