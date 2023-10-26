@@ -51,7 +51,7 @@ function Login() {
       <h3>Available Users:</h3>
       <ul>
         {users.map((user) => (
-          <li key={user.id}>{user.username}</li>
+          <li key={user.username}>{user.username}</li>
         ))}
       </ul>
     </div>

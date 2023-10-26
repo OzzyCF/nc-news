@@ -7,6 +7,7 @@ function TopicArticleList() {
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { topic_slug } = useParams();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -20,11 +21,13 @@ function TopicArticleList() {
       })
       .catch((error) => {
         console.error("Failed to load articles for topic:", error);
+        setError("Failed to load articles for this topic.");
         setIsLoading(false);
       });
   }, [topic_slug]);
 
   if (isLoading) return <p>Loading articles...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div>

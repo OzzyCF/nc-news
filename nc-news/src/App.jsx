@@ -14,6 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import Login from "./components/users/Login";
 import TopicArticleList from "./components/topics/TopicArticleList";
+import NotFound from "./components/common/NotFound";
 
 function App() {
   return (
@@ -50,6 +51,7 @@ function App() {
                   </Route>
                   <Route path="/users/:username" element={<UserProfile />} />
                   <Route path="/login" element={<Login />} />
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </div>
             </main>
