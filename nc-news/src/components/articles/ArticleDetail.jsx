@@ -9,8 +9,8 @@ function ArticleDetail() {
   const [article, setArticle] = useState(null);
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { article_id } = useParams();
-  const [showComments, setShowComments] = useState(false);
+  const { article_id: articleIdFromUrl } = useParams();
+
   const { user } = useContext(UserContext);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,7 +24,7 @@ function ArticleDetail() {
     setArticle({ ...article, votes: updatedVotes });
     axios
       .patch(
-        `https://backend-news-api-ozzycf.onrender.com/api/articles/${article_id}`,
+        `https://backend-news-api-ozzycf.onrender.com/api/articles/${currentArticleId}`,
         { inc_votes: increment }
       )
       .catch((error) => {
@@ -39,12 +39,20 @@ function ArticleDetail() {
       toast.error("Comment cannot be empty.");
       return;
     }
+    const currentArticleId =
+      articleIdFromUrl || sessionStorage.getItem("lastVisitedArticleId");
+
+    if (!currentArticleId) {
+      console.error("No article ID found.");
+      toast.error("Error submitting the comment.");
+      return;
+    }
 
     setIsSubmitting(true);
 
     axios
       .post(
-        `https://backend-news-api-ozzycf.onrender.com/api/articles/${article_id}/comments`,
+        `https://backend-news-api-ozzycf.onrender.com/api/articles/${currentArticleId}/comments`,
         { username: user.username, body: newComment }
       )
       .then((response) => {
@@ -61,9 +69,20 @@ function ArticleDetail() {
   };
 
   useEffect(() => {
+    if (articleIdFromUrl) {
+      sessionStorage.setItem("lastVisitedArticleId", articleIdFromUrl);
+    }
+    const currentArticleId =
+      articleIdFromUrl || sessionStorage.getItem("lastVisitedArticleId");
+
+    if (!currentArticleId) {
+      console.error("No article ID found.");
+      return;
+    }
+
     axios
       .get(
-        `https://backend-news-api-ozzycf.onrender.com/api/articles/${article_id}`
+        `https://backend-news-api-ozzycf.onrender.com/api/articles/${currentArticleId}`
       )
       .then((response) => {
         setArticle(response.data.article);
@@ -76,7 +95,7 @@ function ArticleDetail() {
 
     axios
       .get(
-        `https://backend-news-api-ozzycf.onrender.com/api/articles/${article_id}/comments`
+        `https://backend-news-api-ozzycf.onrender.com/api/articles/${currentArticleId}/comments`
       )
       .then((response) => {
         const sortedComments = response.data.comments.sort(
@@ -89,7 +108,7 @@ function ArticleDetail() {
         console.error("Error fetching the comments:", error);
         setIsLoading(false);
       });
-  }, [article_id]);
+  }, [articleIdFromUrl]);
 
   if (isLoading || !article) return <p>Loading article...</p>;
 
@@ -110,16 +129,12 @@ function ArticleDetail() {
         <button onClick={() => handleVote(-1)}>👎 Downvote</button>
       </div>
 
-      <button onClick={() => setShowComments(!showComments)}>
-        {showComments ? "Hide Comments" : "Show Comments"}
-      </button>
-      {showComments && (
-        <div className="comments-box">
-          {comments.map((comment) => (
-            <CommentCard key={comment.comment_id} comment={comment} />
-          ))}
-        </div>
-      )}
+      <div className="comments-box">
+        {comments.map((comment) => (
+          <CommentCard key={comment.comment_id} comment={comment} />
+        ))}
+      </div>
+
       {!user && (
         <p id="comment-login-prompt">
           Please login if you would like to leave a comment.

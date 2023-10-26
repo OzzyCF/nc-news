@@ -6,14 +6,16 @@ import { UserContext } from "../../contexts/UserContext";
 
 function Navbar() {
   const { refetch } = useContext(ArticleContext);
-  const { user, logout } = useContext(UserContext); // logout function
+  const { user, setUser, logout } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
-    navigate("/"); // home page after logout
-  };
+    setUser(null);
 
+    localStorage.removeItem("loggedInUser");
+
+    navigate("/");
+  };
   return (
     <div className="navbar">
       <Link to="/" onClick={refetch}>
