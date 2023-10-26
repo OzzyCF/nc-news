@@ -16,6 +16,12 @@ function TopicList() {
       .then((response) => {
         setTopics(response.data.topics);
         setIsLoading(false);
+        if (
+          topic_slug &&
+          !response.data.topics.some((topic) => topic.slug === topic_slug)
+        ) {
+          setError("404: Topic not found.");
+        }
       })
       .catch((err) => {
         console.error(err);

@@ -81,14 +81,19 @@ body {
 .article-list{
   background-color: #5b5b5b; 
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr; 
+  grid-template-columns: 1fr 1fr 1fr 1fr; 
   gap: 10px;
+  max-width: 80%;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+
 }
 
 /* Article card styles */
 .article-card {
   position: relative;
-  max-width: 300px;
   max-height: 360px;
   min-height: 360px;
   display: flex;
@@ -138,22 +143,24 @@ body {
 
 /* Top article specific styles */
 .top-article {
-  flex-direction: row; /* change direction to row for top article */
+  display: flex;
+  flex-direction: row;
+  max-width: auto;
+  grid-column: 1 / -1;  /* change direction to row for top article */
 }
 
-.top-article {
-  grid-column: 1 / -1; 
+
+
+ .top-article .article-image {
   
-}
-
-.top-article .article-image {
-  width: 30%;
+  max-width: 65%;
   margin-right: 20px;
-  flex-grow: 1; /* reset flex-grow for top article */
+  
 }
 
 .top-article .article-meta, .top-article h4, .top-article p {
   max-width: 100%;
+  width: 100%;
   max-height: auto;
 }
 

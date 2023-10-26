@@ -5,7 +5,7 @@ function Header() {
     <div className="header">
       <img
         className="nc-logo-header"
-        src="../src/assets/NC News Logo.png"
+        src="/assets/NC News Logo.png"
         alt="NC News logo of colors red, black and white"
       />
     </div>
