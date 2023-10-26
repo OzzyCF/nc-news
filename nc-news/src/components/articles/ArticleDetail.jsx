@@ -10,28 +10,38 @@ function ArticleDetail() {
   const [comments, setComments] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const { article_id: articleIdFromUrl } = useParams();
-
   const { user } = useContext(UserContext);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [hasVoted, setHasVoted] = useState(
+    user ? localStorage.getItem(`${user.username}_${articleIdFromUrl}`) : null
+  );
 
   const handleVote = (increment) => {
-    if (!user) {
-      toast.error("Please log in to vote.");
+    if (hasVoted) {
+      toast.error("You've already voted on this article.");
       return;
     }
+
     const updatedVotes = article.votes + increment;
     setArticle({ ...article, votes: updatedVotes });
+
     axios
       .patch(
-        `https://backend-news-api-ozzycf.onrender.com/api/articles/${currentArticleId}`,
+        `https://backend-news-api-ozzycf.onrender.com/api/articles/${articleIdFromUrl}`,
         { inc_votes: increment }
       )
+
+      .then(toast.success("Thank you for your vote"))
       .catch((error) => {
         console.error(error);
         setArticle({ ...article, votes: article.votes });
         toast.error("Failed to update the vote. Please try again.");
       });
+
+    localStorage.setItem(`${user.username}_${articleIdFromUrl}`, "voted");
+    setHasVoted("voted");
   };
 
   const handleCommentDelete = (commentId) => {
@@ -81,6 +91,13 @@ function ArticleDetail() {
     const currentArticleId =
       articleIdFromUrl || sessionStorage.getItem("lastVisitedArticleId");
 
+    if (user) {
+      const voteStatus = localStorage.getItem(
+        `${user.username}_${articleIdFromUrl}`
+      );
+      setHasVoted(voteStatus);
+    }
+
     if (!currentArticleId) {
       console.error("No article ID found.");
       return;
@@ -96,6 +113,7 @@ function ArticleDetail() {
       })
       .catch((error) => {
         console.error("Error fetching the article:", error);
+        setError("Article not found or failed to load.");
         setIsLoading(false);
       });
 
@@ -116,7 +134,9 @@ function ArticleDetail() {
       });
   }, [articleIdFromUrl]);
 
-  if (isLoading || !article) return <p>Loading article...</p>;
+  if (isLoading) return <p>Loading article...</p>;
+  if (error) return <p>{error}</p>;
+  if (!article) return <p>Article not available.</p>;
 
   return (
     <div className="article-detail">
@@ -131,8 +151,12 @@ function ArticleDetail() {
         <p>Topic: {article.topic}</p>
         <p>Votes: {article.votes}</p>
         <p>Comments: {article.comment_count}</p>
-        <button onClick={() => handleVote(1)}>👍 Upvote</button>
-        <button onClick={() => handleVote(-1)}>👎 Downvote</button>
+        {!hasVoted && (
+          <>
+            <button onClick={() => handleVote(1)}>👍 Upvote</button>
+            <button onClick={() => handleVote(-1)}>👎 Downvote</button>
+          </>
+        )}
       </div>
 
       <div className="comments-box">
