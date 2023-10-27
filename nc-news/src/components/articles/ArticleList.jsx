@@ -1,14 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useSearchParams } from "react-router-dom";
+
 import ArticleContext from "../../contexts/ArticleContext";
 import ArticleCard from "./ArticleCard";
-import SwitchButton from "../common/SwitchButton";
+import { InfinitySpin } from "react-loader-spinner";
 
 function ArticleList() {
   const { articles, isLoading } = useContext(ArticleContext);
   const [sortMethod, setSortMethod] = useState("date");
   const [isAscending, setIsAscending] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [articlesPerPage] = useState(8);
 
   useEffect(() => {
     const method = searchParams.get("sort_by") || "date";
@@ -17,7 +20,14 @@ function ArticleList() {
     setIsAscending(order);
   }, [searchParams]);
 
-  if (isLoading) return <p>Loading articles...</p>;
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <p>Loading...</p>
+        <InfinitySpin width={200} color="#c40000" />
+      </div>
+    );
+  }
 
   const sortedArticles = [...articles].sort((a, b) => {
     let diff;
@@ -37,81 +47,54 @@ function ArticleList() {
     return isAscending ? diff : -diff;
   });
 
-  const topArticle = sortedArticles[0];
-  const otherArticles = sortedArticles.slice(1);
+  const indexOfLastArticle = currentPage * articlesPerPage;
+  const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
+  const currentArticles = sortedArticles.slice(
+    indexOfFirstArticle,
+    indexOfLastArticle
+  );
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div>
-      <div className="sorting-controls">
-        <h5>Sort by: </h5>
-        <div className="switch-container">
-          <SwitchButton
-            onChange={() => {
-              setSortMethod("date");
-              setSearchParams({
-                sort_by: "date",
-                order: isAscending ? "asc" : "desc",
-              });
-            }}
-            checked={sortMethod === "date"}
-          />
-          <div className="switch-label">Date</div>
-        </div>
-
-        <div className="switch-container">
-          <SwitchButton
-            onChange={() => {
-              setSortMethod("comment_count");
-              setSearchParams({
-                sort_by: "comment_count",
-                order: isAscending ? "asc" : "desc",
-              });
-            }}
-            checked={sortMethod === "comment_count"}
-          />
-          <div className="switch-label">Comment Count</div>
-        </div>
-
-        <div className="switch-container">
-          <SwitchButton
-            onChange={() => {
-              setSortMethod("votes");
-              setSearchParams({
-                sort_by: "votes",
-                order: isAscending ? "asc" : "desc",
-              });
-            }}
-            checked={sortMethod === "votes"}
-          />
-          <div className="switch-label">Votes</div>
-        </div>
-
-        <div className="switch-container">
-          <SwitchButton
-            onChange={() => {
-              setIsAscending((prev) => !prev);
-              setSearchParams({
-                sort_by: sortMethod,
-                order: !isAscending ? "asc" : "desc",
-              });
-            }}
-            checked={isAscending}
-          />
-          <div className="switch-label">Ascending</div>
-        </div>
-      </div>
-
+    <div className="wrapper">
       <div className="article-list">
-        <ArticleCard
-          key={topArticle.title}
-          article={topArticle}
-          className="top-article"
-        />
-
-        {otherArticles.map((article) => (
+        {currentArticles.map((article) => (
           <ArticleCard key={article.title} article={article} />
         ))}
       </div>
+      <Pagination
+        articlesPerPage={articlesPerPage}
+        totalArticles={articles.length}
+        paginate={paginate}
+      />
+    </div>
+  );
+}
+
+function Pagination({ articlesPerPage, totalArticles, paginate }) {
+  const pageNumbers = [];
+
+  for (let i = 1; i <= Math.ceil(totalArticles / articlesPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePageClick = (pageNumber, event) => {
+    event.preventDefault();
+    paginate(pageNumber);
+  };
+
+  return (
+    <div className="pagination">
+      {pageNumbers.map((number) => (
+        <span
+          key={number}
+          onClick={(e) => handlePageClick(number, e)}
+          className="page-number"
+        >
+          {number}
+        </span>
+      ))}
     </div>
   );
 }

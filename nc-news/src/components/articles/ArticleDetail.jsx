@@ -4,6 +4,7 @@ import axios from "axios";
 import CommentCard from "./CommentCard";
 import { toast } from "react-toastify";
 import { UserContext } from "../../contexts/UserContext";
+import { InfinitySpin } from "react-loader-spinner";
 
 function ArticleDetail() {
   const [article, setArticle] = useState(null);
@@ -133,7 +134,14 @@ function ArticleDetail() {
       });
   }, [articleIdFromUrl]);
 
-  if (isLoading) return <p>Loading article...</p>;
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <p>Loading...</p>
+        <InfinitySpin width={200} color="#c40000" />
+      </div>
+    );
+  }
   if (error) return <p>{error}</p>;
   if (!article) return <p>Article not available.</p>;
 

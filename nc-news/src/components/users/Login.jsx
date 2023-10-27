@@ -36,24 +36,28 @@ function Login() {
   };
 
   return (
-    <div className="login">
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Enter Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <button type="submit">Login</button>
-      </form>
-      {error && <p>{error}</p>}
-      <h3>Available Users:</h3>
-      <ul>
-        {users.map((user) => (
-          <li key={user.username}>{user.username}</li>
-        ))}
-      </ul>
+    <div className="wrapper">
+      <div className="login">
+        <h2>Login</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            placeholder="Enter Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <button type="submit">Login</button>
+        </form>
+        {error && <p>{error}</p>}
+        <div className="user-list">
+          <h3>Available Users:</h3>
+          <ul>
+            {users.map((user) => (
+              <li key={user.username}>{user.username}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }

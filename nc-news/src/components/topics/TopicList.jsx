@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams, Outlet } from "react-router-dom";
 import axios from "axios";
-import TopicArticleList from "./TopicArticleList";
+
+import { InfinitySpin } from "react-loader-spinner";
 
 function TopicList() {
   const [topics, setTopics] = useState(null);
@@ -30,7 +31,14 @@ function TopicList() {
       });
   }, []);
 
-  if (isLoading) return <p>Loading topics...</p>;
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <p>Loading...</p>
+        <InfinitySpin width={200} color="#c40000" />
+      </div>
+    );
+  }
   if (error) return <p>{error}</p>;
 
   return (
