@@ -32,7 +32,6 @@ function ArticleDetail() {
         `https://backend-news-api-ozzycf.onrender.com/api/articles/${articleIdFromUrl}`,
         { inc_votes: increment }
       )
-
       .then(toast.success("Thank you for your vote"))
       .catch((error) => {
         console.error(error);
